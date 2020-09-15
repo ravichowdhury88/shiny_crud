@@ -1,0 +1,2 @@
+stock,trade_type,contract_type,paid_price,strike_price,date_open,date_expiry,sold_price,contracts_buy,contract_close,date_close,stop_loss,profit_loss
+AAPL,Option,Call,1.96,125.5,9/1/2020,9/18/2020,,1,,,,

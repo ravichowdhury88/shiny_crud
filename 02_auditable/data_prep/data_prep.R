@@ -1,24 +1,14 @@
 library(dplyr)
 library(tidyr)
 library(tibble)
+library(readr)
 
 # attach data frame from 'mtcars' dataset to global environment
-mtcars <- datasets::mtcars
+trade_df <- read_csv("02_auditable/data_prep/prepped/trade_data.csv",
+                     col_types = cols(date_open = col_date(format = "%m/%d/%Y"),
+                                      date_expiry = col_date(format = "%m/%d/%Y"),
+                                      sold_price = col_number(), contracts_buy = col_integer(),
+                                      contract_close = col_integer(), date_close = col_date(format = "%m/%d/%Y"),
+                                      stop_loss = col_double(), profit_loss = col_double()))
 
-# convert the rownames to an actual column.  We suggest to never use row names, just
-# use a regular column.
-mtcars <- rownames_to_column(mtcars, var = 'model')
-
-# Converting Weight (i.e. 'wt') from 1000's of lbs to lbs
-mtcars$wt <- mtcars$wt * 1000
-
-
-# Converting binary values to intended, character values
-mtcars <- mtcars %>%
-  mutate(
-    vs = ifelse(vs == 0, 'V-shaped', 'Straight'),
-    am = ifelse(am == 0, 'Automatic', 'Manual')
-  )
-
-
-saveRDS(mtcars, file = '02_auditable/data_prep/prepped/mtcars.RDS')
+saveRDS(trade_df, file = '02_auditable/data_prep/prepped/tradedf.RDS')

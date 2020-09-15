@@ -13,7 +13,7 @@ library(dbplyr)
 
 conn <- DBI::dbConnect(
   RSQLite::SQLite(),
-  dbname = 'data/mtcars.sqlite3'
+  dbname = 'data/tradedf.sqlite3'
 )
 
 shiny::onStop(function() {
@@ -32,12 +32,11 @@ options(spinner.type = 8)
 # Create 'names_map' dataframe to convert variable names ('names') to clean
 # column names ('display_names') in table (i.e. capitalized words, spaces, etc.)
 names_map <- data.frame(
-  names = c('model', 'mpg', 'cyl', 'disp', 'hp', 'drat', 'wt', 'qsec', 'vs',
-            'am', 'gear', 'carb', 'created_at', 'created_by', 'modified_at', 'modified_by'),
-  display_names = c('Model', 'Miles/Gallon', 'Cylinders', 'Displacement (cu.in.)',
-                    'Horsepower', 'Rear Axle Ratio', 'Weight (lbs)', '1/4 Mile Time',
-                    'Engine', 'Transmission', 'Forward Gears', 'Carburetors', 'Created At',
-                    'Created By', 'Modified At', 'Modified By'),
+  names = c('stock', 'trade_type', 'contract_type', 'paid_price', 'strike_price', 'date_open', 'date_expiry', 'sold_price', 'contracts_buy',
+            'contract_close', 'date_close', 'stop_loss', 'profit_loss'),
+  display_names = c('Stock', 'Trade Type', 'Contract Type', 'Paid Price',
+                    'Strike Price', 'Date Open', 'Expiry Date', 'Price Sold',
+                    'Contracts Buy', 'Contracts Sold', 'Date Close', 'Stop Loss', 'Profit Loss'),
   stringsAsFactors = FALSE
 )
 

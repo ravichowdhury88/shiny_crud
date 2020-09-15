@@ -5,26 +5,27 @@ library(dplyr)
 # Create a connection object with SQLite
 conn <- dbConnect(
   RSQLite::SQLite(),
-  '02_auditable/shiny_app/data/mtcars.sqlite3'
+  '02_auditable/shiny_app/data/tradedf.sqlite3'
 )
 
 # Create a query to prepare the 'mtcars' table with additional 'uid', 'id',
 # & the 4 created/modified columns
-create_mtcars_query = "CREATE TABLE mtcars (
+create_tradedf_query = "CREATE TABLE tradedf (
   uid                             TEXT PRIMARY KEY,
   id_                             TEXT,
-  model                           TEXT,
-  mpg                             REAL,
-  cyl                             REAL,
-  disp                            REAL,
-  hp                              REAL,
-  drat                            REAL,
-  wt                              REAL,
-  qsec                            REAL,
-  vs                              TEXT,
-  am                              TEXT,
-  gear                            REAL,
-  carb                            REAL,
+  stock                           TEXT,
+  trade_type                      TEXT,
+  contract_type                   TEXT,
+  paid_price                      REAL,
+  strike_price                    REAL,
+  date_open                       DATE,
+  date_expiry                     DATE,
+  sold_price                      REAL,
+  contracts_buy                   INTEGER,
+  contract_close                  INTEGER,
+  date_close                      DATE,
+  stop_loss                       REAL,
+  profit_loss                     REAL,
   created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by                      TEXT,
   modified_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -34,12 +35,12 @@ create_mtcars_query = "CREATE TABLE mtcars (
 
 # dbExecute() executes a SQL statement with a connection object
 # Drop the table if it already exists
-dbExecute(conn, "DROP TABLE IF EXISTS mtcars")
+dbExecute(conn, "DROP TABLE IF EXISTS tradedf")
 # Execute the query created above
-dbExecute(conn, create_mtcars_query)
+dbExecute(conn, create_tradedf_query)
 
 # Read in the RDS file created in 'data_prep.R'
-dat <- readRDS("02_auditable/data_prep/prepped/mtcars.RDS")
+dat <- readRDS("02_auditable/data_prep/prepped/tradedf.RDS")
 
 # add uid column to the `dat` data frame.  This will be unique to each row.
 dat$uid <- uuid::UUIDgenerate(n = nrow(dat))
@@ -57,7 +58,7 @@ dat <- dat %>%
 # Fill in the SQLite table with the values from the RDS file
 DBI::dbWriteTable(
   conn,
-  name = "mtcars",
+  name = "tradedf",
   value = dat,
   overwrite = FALSE,
   append = TRUE
@@ -68,4 +69,5 @@ dbListTables(conn)
 
 # MUST disconnect from SQLite before continuing
 dbDisconnect(conn)
+
 

@@ -18,7 +18,7 @@ cars_table_module_ui <- function(id) {
       column(
         width = 2,
         actionButton(
-          ns("add_car"),
+          ns("add_stock"),
           "Add",
           class = "btn-success",
           style = "color: #fff;",
@@ -32,8 +32,8 @@ cars_table_module_ui <- function(id) {
     fluidRow(
       column(
         width = 12,
-        title = "Motor Trend Car Road Tests",
-        DTOutput(ns('car_table')) %>%
+        title = "Trading Journal",
+        DTOutput(ns('tradedf')) %>%
           withSpinner(),
         tags$br(),
         tags$br()
@@ -67,7 +67,7 @@ cars_table_module <- function(input, output, session) {
     out <- NULL
     tryCatch({
       out <- conn %>%
-        tbl('mtcars') %>%
+        tbl('tradedf') %>%
         select(-uid) %>%
         collect() %>%
         mutate(
@@ -136,16 +136,16 @@ cars_table_module <- function(input, output, session) {
     }
   })
 
-  output$car_table <- renderDT({
+  output$tradedf <- renderDT({
     req(car_table_prep())
     out <- car_table_prep()
 
     datatable(
       out,
       rownames = FALSE,
-      colnames = c('Model', 'Miles/Gallon', 'Cylinders', 'Displacement (cu.in.)',
-                   'Horsepower', 'Rear Axle Ratio', 'Weight (lbs)', '1/4 Mile Time',
-                   'Engine', 'Transmission', 'Forward Gears', 'Carburetors', 'Created At',
+      colnames = c('Stock', 'Trade Type', 'Contract Type', 'Paid Price',
+                   'Strike Price', 'Date Open', 'Expiry Date', 'Price Sold',
+                   'Contracts Buy', 'Contracts Sold', 'Date Close', 'Stop Loss', 'Profit Loss', 'Created At',
                    'Created By', 'Modified At', 'Modified By'),
       selection = "none",
       class = "compact stripe row-border nowrap",
@@ -159,7 +159,7 @@ cars_table_module <- function(input, output, session) {
           list(
             extend = "excel",
             text = "Download",
-            title = paste0("mtcars-", Sys.Date()),
+            title = paste0("Trade Journal-", Sys.Date()),
             exportOptions = list(
               columns = 1:(length(out) - 1)
             )
@@ -171,20 +171,20 @@ cars_table_module <- function(input, output, session) {
       )
     ) %>%
       formatDate(
-        columns = c("created_at", "modified_at"),
+        columns = c("created_at", "modified_at", "date_open", "date_expiry", "date_close"),
         method = 'toLocaleString'
       )
 
   })
 
-  car_table_proxy <- DT::dataTableProxy('car_table')
+  car_table_proxy <- DT::dataTableProxy('tradedf')
 
   callModule(
     car_edit_module,
     "add_car",
-    modal_title = "Add Car",
+    modal_title = "Add Stock",
     car_to_edit = function() NULL,
-    modal_trigger = reactive({input$add_car})
+    modal_trigger = reactive({input$add_stock})
   )
 
   car_to_edit <- eventReactive(input$car_id_to_edit, {
